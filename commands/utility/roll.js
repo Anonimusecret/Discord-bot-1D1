@@ -20,6 +20,9 @@ module.exports = {
             let mistakeQ = false;
             let mistakeD = false;
             let mistakeSum = false;
+            if (request === '1d1'){
+                await interaction.followUp("<:crit:1037660173659029505> **Сервер запривачен** <:crit:1037660173659029505>"); //пасхалка
+            } 
 
             function roll(quantity, dice) {
                 
@@ -59,7 +62,7 @@ module.exports = {
                 await interaction.followUp('Простите, бросить куб больше 1d1000 нельзя');
             } else {
                 try {
-                    sum = eval(result);
+                    sum = eval?.(`"use strict";(${result})`) 
                 } catch (error) {
                     console.error(error);
                     await interaction.followUp('Ошибка в формуле броска');
@@ -67,7 +70,7 @@ module.exports = {
                 }
                 if(!mistakeSum){
                     try {
-                        await interaction.followUp(`${interaction.user.globalName} Роллит: ` + '`' + request + '`' + '\nПроброс: `' + rolls + '`' + '\nИтого: ' + sum);
+                        await interaction.followUp(`${interaction.user/*.displayName*/} Роллит: ` + '`' + request + '`' + '\nПроброс: `' + rolls + '`' + '\nИтого: ' + sum);
                     } catch (error) {
                         console.error(error);
                         await interaction.followUp('Слишком длинный ответ. Невозможно вывести из-за ограничений Дискорда');
