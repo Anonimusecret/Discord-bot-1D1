@@ -13,55 +13,69 @@ module.exports = {
         ),
         async execute(interaction) {
             await interaction.deferReply();
-            let message = '\n`[';
             let sum = 0;
             const request = interaction.options.getString('request', true);
-            const quantity = request.substring(0, request.indexOf('d'));
-            let dice = request.substring(request.indexOf('d') + 1, request.indexOf('+'));
-            let modif = request.substring(request.indexOf('+') + 1);
-            let sumMod = 0;
-            if (request.indexOf('+') != -1){ // вытягиваем кость до модификатора
-                dice = request.substring(request.indexOf('d') + 1, request.indexOf('+'));
-            } else { // или просто берем её если модификатора нет
-                dice = request.substring(request.indexOf('d') + 1);
-            }
-            
-            
-            if(quantity > 100){
-                await interaction.followUp('Простите, бросить больше 100 кубов нельзя');
-            } else if (dice > 1000){
-                await interaction.followUp('Простите, бросить куб больше d1000 нельзя');
-            } else {
+            let rolls = [];
+            const diceRegex = /(\d+)d(\d+)/g
+            let mistakeQ = false;
+            let mistakeD = false;
+            let mistakeSum = false;
+            if (request === '1d1'){
+                await interaction.followUp("<:crit:1037660173659029505> **Сервер запривачен** <:crit:1037660173659029505>"); //пасхалка
+            } 
 
-                for( let q = quantity ; q > 0; q-- ){ // бросаем каждый кб отдельно
-                    let roll = (Math.floor(Math.random() * dice)+1);
-                    
-                    if( q === quantity ){
-                        message += roll
-                    } else {
-                        message += ', ' + roll
-                    }
-                    sum += roll; // суммируем результат бросков
+            function roll(quantity, dice) {
+                
+                let result = 0;
+                dice = Math.floor(dice);
+                rolls += '['
+                if (quantity > 100){
+                    mistakeQ = true;
+                    rolls += 0;
                 }
-
-                if (request.indexOf('+') != -1 ){ // если есть модификатор к броску то считаем его к сумме
-                    //let sumMod = 0; //обьявление суммы модификаторов тут, но для теста пока в комментарии и обьявлено выше
-                    while( modif.indexOf('+') != -1 ){ // если модификатор не +x а +x+y+z+...+n
-
-                        sumMod += Number(modif.substring(0, modif.indexOf('+')));
-                        //console.log(sumMod);
-                        modif = modif.replace(modif.substring(0, modif.indexOf('+') + 1), '');
-                        //console.log(modif);
-
-                    }
-                    console.log(request.indexOf('+'));
-                    sumMod += Number(modif); //добавляем  последнюю цифру в модификаторе ибо цикл её не считает
-                    sum += sumMod;// прибавляем к сумме результатов броска итоговый модификатор
+                else if (dice > 1000){
+                    mistakeD = true;
+                    rolls += 0;
                 } else {
-                    modif = 0;
+                    for( let q = quantity ; q > 0; q-- ){ // бросаем каждый куб отдельно
+                        let roll = Math.floor(Math.random() * dice)+1
+                        if (q === quantity){
+                            rolls += roll;
+                        } else {
+                            rolls += ', ' + roll;
+                        }
+                        result += roll;
+                    }
                 }
-                message += ']` \nСуммарно = `' + sum + '`' // закрываем сообщение
-                await interaction.followUp(`${interaction.user.globalName} Роллит ` + '`' + request + '`' + message + '\nМодификатор: ' + sumMod ); // выводим результат
+                rolls += ']'
+                return result;
+            };
+            
+            let result = request;
+            let match;
+            while (match = diceRegex.exec(request)){
+                result = result.replace(match[0], roll(match[1], match[2]));
+            };
+            if(mistakeQ){
+                await interaction.followUp('Простите, бросить больше 100 кубов за раз нельзя');
+            } else if(mistakeD){
+                await interaction.followUp('Простите, бросить куб больше 1d1000 нельзя');
+            } else {
+                try {
+                    sum = eval?.(`"use strict";(${result})`) 
+                } catch (error) {
+                    console.error(error);
+                    await interaction.followUp('Ошибка в формуле броска');
+                    mistakeSum = true;
+                }
+                if(!mistakeSum){
+                    try {
+                        await interaction.followUp(`${interaction.user/*.displayName*/} Роллит: ` + '`' + request + '`' + '\nПроброс: `' + rolls + '`' + '\nИтого: ' + sum);
+                    } catch (error) {
+                        console.error(error);
+                        await interaction.followUp('Слишком длинный ответ. Невозможно вывести из-за ограничений Дискорда');
+                    }
+                }
             }
         }
 };
