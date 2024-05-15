@@ -6,7 +6,7 @@ const rest = new REST().setToken(token);
 // ...
 
 // for guild-based commands
-rest.delete(Routes.applicationGuildCommand(clientId, guildId, 'comandIdHere'))
+rest.delete(Routes.applicationGuildCommand(clientId, guildId, '1240399887758004276')) // commandId here
 	.then(() => console.log('Successfully deleted guild command'))
 	.catch(console.error);
 
