@@ -77,54 +77,54 @@ module.exports = {
 
                 // -------------------------------------------------------
 
-            const select = new StringSelectMenuBuilder()
-			.setCustomId('starter')
-			.setPlaceholder('Make a selection!')
-            // .setMinValues(1) //можно не ставить для одиночного выбора
-			// .setMaxValues(2) //можно не ставить для одиночного выбора
-			.addOptions(
-				new StringSelectMenuOptionBuilder()
-					.setLabel('Bulbasaur')
-					.setDescription('The dual-type Grass/Poison Seed Pokémon.')
-					.setValue('bulbasaur'),
-				new StringSelectMenuOptionBuilder()
-					.setLabel('Charmander')
-					.setDescription('The Fire-type Lizard Pokémon.')
-					.setValue('charmander'),
-				new StringSelectMenuOptionBuilder()
-					.setLabel('Squirtle')
-					.setDescription('The Water-type Tiny Turtle Pokémon.')
-					.setValue('squirtle'),
-			);
+            // const select = new StringSelectMenuBuilder()
+			// .setCustomId('starter')
+			// .setPlaceholder('Make a selection!')
+            // // .setMinValues(1) //можно не ставить для одиночного выбора
+			// // .setMaxValues(2) //можно не ставить для одиночного выбора
+			// .addOptions(
+			// 	new StringSelectMenuOptionBuilder()
+			// 		.setLabel('Bulbasaur')
+			// 		.setDescription('The dual-type Grass/Poison Seed Pokémon.')
+			// 		.setValue('bulbasaur'),
+			// 	new StringSelectMenuOptionBuilder()
+			// 		.setLabel('Charmander')
+			// 		.setDescription('The Fire-type Lizard Pokémon.')
+			// 		.setValue('charmander'),
+			// 	new StringSelectMenuOptionBuilder()
+			// 		.setLabel('Squirtle')
+			// 		.setDescription('The Water-type Tiny Turtle Pokémon.')
+			// 		.setValue('squirtle'),
+			// );
 
             
 
-            const row = new ActionRowBuilder()
-                .addComponents(select);
+            // const row = new ActionRowBuilder()
+            //     .addComponents(select);
 
 
-            const input = interaction.options.getString('input', true);
-            const message = String(input);
-            const isEphemeral = interaction.options.getString('ephemeral') === 'true'
-            const response = await interaction.reply({
-                content: message, 
-                ephemeral: isEphemeral,
-                components: [row]
-            });
+            // const input = interaction.options.getString('input', true);
+            // const message = String(input);
+            // const isEphemeral = interaction.options.getString('ephemeral') === 'true'
+            // const response = await interaction.reply({
+            //     content: message, 
+            //     ephemeral: isEphemeral,
+            //     components: [row]
+            // });
 
-            const collectorFilter = i => i.user.id === interaction.user.id; // фильтр пользователя который вызвал команду
+            // const collectorFilter = i => i.user.id === interaction.user.id; // фильтр пользователя который вызвал команду
 
-            try {
-                const confirmation = await response.awaitMessageComponent({ filter: collectorFilter, time: 60_000 }); //ждем тыка на компонент time сукунд
-                // console.log(confirmation.values);
-                if (confirmation.values[0] === 'charmander') {
-                    await confirmation.update({ content: `Мужик.`, components: [] });
-                } else if (confirmation.values[0] === 'squirtle' || confirmation.values[0] === 'bulbasaur') {
-                    await confirmation.update({ content: 'Зря. Зря.', components: [] });
-                }
-            } catch (e) {
-                await interaction.editReply({ content: 'Долго не тыкали, отменяю', components: [] });
-            }
+            // try {
+            //     const confirmation = await response.awaitMessageComponent({ filter: collectorFilter, time: 60_000 }); //ждем тыка на компонент time сукунд
+            //     // console.log(confirmation.values);
+            //     if (confirmation.values[0] === 'charmander') {
+            //         await confirmation.update({ content: `Мужик.`, components: [] });
+            //     } else if (confirmation.values[0] === 'squirtle' || confirmation.values[0] === 'bulbasaur') {
+            //         await confirmation.update({ content: 'Зря. Зря.', components: [] });
+            //     }
+            // } catch (e) {
+            //     await interaction.editReply({ content: 'Долго не тыкали, отменяю', components: [] });
+            // }
 
 
 //-----------------------------------------------------------
