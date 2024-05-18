@@ -91,9 +91,9 @@ module.exports = {
 				context.fillStyle = '#ffffff';
 				context.fillText('Profile', canvas.width / 2.5, canvas.height / 3.5);
 
-				context.font = applyText(canvas, `${interaction.member.displayName}!`);
+				context.font = applyText(canvas, `${interaction.member.displayName}`);
 				context.fillStyle = '#ffffff';
-				context.fillText(`${interaction.member.displayName}!`, canvas.width / 2.5, canvas.height / 1.8);
+				context.fillText(`${interaction.member.displayName}`, canvas.width / 2.5, canvas.height / 1.8);
 
 				context.beginPath();
 				context.arc(125, 125, 100, 0, Math.PI * 2, true);

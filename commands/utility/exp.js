@@ -31,9 +31,25 @@ module.exports = {
             //код тут
             await interaction.deferReply(); //приложение думает
             const request = interaction.options.getString('request', true);
+            // const progression = interaction.options.getString('progression', true);
+            const crRegEx = /\d+/g
+            let crArr = [];
+            let match;
+
+            while (match = crRegEx.exec(request)){
+                crArr += match[0];
+
+                // result = result.replace(match[0], roll(match[1], match[2]));
+            };
 
             // превратить CR в EXP в зависимости от параметра progression , по умолчанию медиум
-            
+            function callback(currentValue) {
+                console.log(currentValue);  //your iterator
+            }
+            //if (progression === 'm'){
+                crArr.forEach(callback);
+            //}
+
             await interaction.followUp("<:Cubes:956132971725869076> **Work in progress** <:Cubes:956132971725869076>");
         }
     };
