@@ -60,10 +60,12 @@ module.exports = {
                         components: [row],
                     });
                 }
-                collector.on('end', async collected => await interaction.editReply(`Брошено ${collected.size} кубов`));
+                await interaction.followUp({content: 'Заролено ' + rollResult , ephemeral: true});
                 // await i.reply(`${i.user} has selected ${selection}!`);
             });
-            
+
+            collector.on('end', async collected => await interaction.editReply(`Брошено ${collected.size} кубов`));
+
 
             // try {
             //\     const confirmation = await response.awaitMessageComponent({ filter: collectorFilter, time: 60_000 });
