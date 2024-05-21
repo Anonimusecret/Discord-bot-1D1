@@ -28,22 +28,26 @@ module.exports = {
             players = Math.floor(players);
 
             // превратить CR в EXP в зависимости от параметра progression , по умолчанию медиум
-            function calculateExp(cr) {
+            function calculateExp(cr) { //Считаем EXP из CR
                 let exp = 400;
-                if ( cr % 2 !== 0 ){
-                    for ( let i = 1 ; i < cr ; i += 2 ){ //цикл подсчета нечетного CR
-                        exp = exp * 2;
+                if (cr >= 1){ //проверка на вход нормального cr для фикса бага
+                    if ( cr % 2 !== 0 ){
+                        for ( let i = 1 ; i < cr ; i += 2 ){ //цикл подсчета нечетного CR
+                            exp = exp * 2;
+                        }
+                    } else {
+                        cr--; // помогаем посчитать нечетную часть CR
+                        for ( let i = 1 ; i < cr ; i += 2 ){
+                            exp = exp * 2;
+                        }
+                        exp = exp * 1.5; // Превращаем нечетный CR 15 в четный 16
                     }
                 } else {
-                    cr--; // помогаем посчитать нечетную часть CR
-                    for ( let i = 1 ; i < cr ; i += 2 ){
-                        exp = exp * 2;
-                    }
-                    exp = exp * 1.5; // Превращаем нечетный CR 15 в четный 16
+                    exp = 0;
                 }
                 return (exp)
             }
-            function calculateCr(request){
+            function calculateCr(request){ //Считаем сумму всей EXP из формулы ввода
                 let result = 0;
                 let match;
                 const crRegEx = /\d+/g;
@@ -68,15 +72,13 @@ module.exports = {
 
                 await interaction.followUp({content: "Из "+ match[1] +" EXP вычтен "+ cr +" CR: " + result, ephemeral: true});
 
-            } else {
-
+            } else { //функция сложения CR
             result = calculateCr(request);
             if (players > 1){
                 await interaction.followUp({content: "EXP: " + result + '\nНаждого из `' + players + '` игроков по ' + (result / players), ephemeral: true});
             } else {
                 await interaction.followUp({content: "EXP: " + result, ephemeral: true});
             }
-
         }
 
         }
