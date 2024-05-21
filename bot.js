@@ -1,12 +1,13 @@
 const Discord = require('discord.js'); // Подключаем библиотеку discord.js
-const { Client, Collection, Events, GatewayIntentBits } = require('discord.js'); // Подключаем библиотеку discord.js
+const { Client, Collection, Events, GatewayIntentBits, AttachmentBuilder } = require('discord.js'); // Подключаем библиотеку discord.js
 
 const client = new Discord.Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.DirectMessageReactions,
-  ]
+	intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.DirectMessageReactions,
+		GatewayIntentBits.GuildModeration,
+	]
 })
 
 client.commands = new Collection();
@@ -51,20 +52,5 @@ for (const file of eventFiles) { //выполнение ивентов
 		client.on(event.name, (...args) => event.execute(...args));
 	}
 }
-
-/*robot.on('message', (msg) => { // Реагирование на сообщения
-  if (msg.author.username != robot.user.username && msg.author.discriminator != robot.user.discriminator) {
-    var comm = msg.content.trim() + " ";
-    var comm_name = comm.slice(0, comm.indexOf(" "));
-    var messArr = comm.split(" ");
-    for (comm_count in comms.comms) {
-      var comm2 = prefix + comms.comms[comm_count].name;
-      if (comm2 == comm_name) {
-        comms.comms[comm_count].out(robot, msg, messArr);
-      }
-    }
-  }
-}); */
-
 
 client.login(token); // Авторизация бота
