@@ -15,16 +15,6 @@ module.exports = {
             .setDescription('Количество игроков')
             .setRequired(false)
         )
-        // .addStringOption(option =>
-        //     option.setName('progression')
-        //     .setDescription('Скорость прогрессии')
-        //     .setRequired(false)
-        //     .addChoices(
-        //         { name: 'fast', value: 'f' },
-        //         { name: 'medium', value: 'm' },
-        //         { name: 'slow', value: 's' }
-        //     ) 
-        // )
         ,
 
         async execute(interaction) {
@@ -32,11 +22,8 @@ module.exports = {
             await interaction.deferReply({content: "Считаем", ephemeral: true}); //приложение думает
             let request = interaction.options.getString('request', true);
             let players = interaction.options.getInteger('players', false) ?? 1;
-            // const progression = interaction.options.getString('progression', true) ?? 'm';
-            const crRegEx = /\d+/g;
-            const multiplicationRegEx = /(\d+)\*(\d+)/g
-            let match1;
-            let match2;
+            const minusRegEx = /(\d+)\-(\d+)/g;
+            let match;
             let result = 0;
             players = Math.floor(players);
 
@@ -56,23 +43,41 @@ module.exports = {
                 }
                 return (exp)
             }
-
-            while(match1 = multiplicationRegEx.exec(request)){
-                for (let i = match1[2] ; i > 0 ; i--){
-                    result += calculateExp(match1[1]);
-                    request = request.replace(match1[0], '');
+            function calculateCr(request){
+                let result = 0;
+                let match;
+                const crRegEx = /\d+/g;
+                const multiplicationRegEx = /(\d+)\*(\d+)/g
+                while(match = multiplicationRegEx.exec(request)){
+                    for (let i = match[2] ; i > 0 ; i--){
+                        result += calculateExp(match[1]);
+                        request = request.replace(match[0], '');
+                    }
                 }
+
+                while(match = crRegEx.exec(request)){
+                    result += calculateExp(match[0]);
+                }
+                return (result);
             }
 
-            while(match2 = crRegEx.exec(request)){
-                result += calculateExp(match2[0]);
-            }
+            if (match = minusRegEx.exec(request)){ //функция команды длЯ вычета cr из exp
+                let exp = match[1];
+                let cr = request.replace(match[0], match[2]);
+                result = exp - calculateExp(cr);
 
+                await interaction.followUp({content: "Из "+ match[1] +" EXP вычтен "+ cr +" CR: " + result, ephemeral: true});
+
+            } else {
+
+            result = calculateCr(request);
             if (players > 1){
                 await interaction.followUp({content: "EXP: " + result + '\nНаждого из `' + players + '` игроков по ' + (result / players), ephemeral: true});
             } else {
                 await interaction.followUp({content: "EXP: " + result, ephemeral: true});
             }
-            
+
+        }
+
         }
     };
