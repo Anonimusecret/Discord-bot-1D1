@@ -20,7 +20,8 @@ module.exports = {
         async execute(interaction) {
             //код тут
             await interaction.deferReply({content: "Считаем", ephemeral: true}); //приложение думает
-            let request = interaction.options.getString('request', true);
+            const input = interaction.options.getString('request', true);
+            let request = input;
             let players = interaction.options.getInteger('players', false) ?? 1;
             const minusRegEx = /(\d+)\-(\d+)/g;
             let match;
@@ -75,9 +76,9 @@ module.exports = {
             } else { //функция сложения CR
             result = calculateCr(request);
             if (players > 1){
-                await interaction.followUp({content: "EXP: " + result + '\nНаждого из `' + players + '` игроков по ' + (result / players), ephemeral: true});
+                await interaction.followUp({content: "Ввод: `"+ input + "`\nEXP: " + result + '\nНаждого из `' + players + '` игроков по ' + (result / players), ephemeral: true});
             } else {
-                await interaction.followUp({content: "EXP: " + result, ephemeral: true});
+                await interaction.followUp({content: "Ввод: `"+ input + "`\nEXP: " + result, ephemeral: true});
             }
         }
 
