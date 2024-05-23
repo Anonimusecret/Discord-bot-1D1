@@ -60,7 +60,7 @@ module.exports = {
                         components: [row],
                     });
                 }
-                await interaction.followUp({content: 'Заролено ' + rollResult , ephemeral: true});
+                await i.reply({content: 'Заролено ' + rollResult , ephemeral: true});
                 // await i.reply(`${i.user} has selected ${selection}!`);
             });
 
