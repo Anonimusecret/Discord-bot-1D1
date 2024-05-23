@@ -12,7 +12,7 @@ module.exports = {
             .setRequired(true)
         )
         .addChannelOption(option =>
-            option.setName('chanel')
+            option.setName('channel')
             .setDescription('Канал куда отправить сообщение')
             .addChannelTypes(ChannelType.GuildText)
             .setRequired(false)
@@ -21,9 +21,9 @@ module.exports = {
 
         async execute(interaction) {
             await interaction.deferReply({ ephemeral: true });
-            let channel = interaction.options.getChannel('chanel', false) ?? interaction.channel;
+            let channel = interaction.options.getChannel('channel', false) ?? interaction.channel;
             let input = interaction.options.getString('input', true);
             channel.send(input)
-            .then( await interaction.editReply({ content: 'Отправлено', ephemeral: true}))
+            .then( await interaction.editReply({ content: `Отправлено в канал ${channel.name}`, ephemeral: true}))
         }
 }

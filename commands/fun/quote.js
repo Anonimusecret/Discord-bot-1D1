@@ -11,24 +11,20 @@ module.exports = {
             .setDescription('Цитата которую нужно сказать')
             .setRequired(true)
         )
-        .addStringOption(option =>
+        .addUserOption(option =>
             option.setName('speaker')
             .setDescription('Кто это сказал?')
             .setRequired(true)
-        )
-        .addChannelOption(option =>
-            option.setName('chanel')
-            .setDescription('Канал куда отправить сообщение')
-            .addChannelTypes(ChannelType.GuildText)
-            .setRequired(false)
         )
         ,
 
         async execute(interaction) {
             await interaction.deferReply({ ephemeral: true });
-            let channel = interaction.options.getChannel('chanel', false) ?? interaction.channel;
+            //console.log(interaction.channel);
+            let channel = interaction.guild.channels.cache.get('835877817580912650');// с**а да. вот как нужно дергать кэш из интеракции PS - цифры это id канала
             let input = interaction.options.getString('input', true);
-            channel.send(input)
-            .then( await interaction.editReply({ content: 'Отправлено', ephemeral: true}))
+            let speaker = interaction.options.getUser('speaker', true);
+            channel.send(input + ` ${speaker}`)
+            .then( await interaction.editReply({ content: `Цитирован ${speaker}`, ephemeral: true}))
         }
 }
