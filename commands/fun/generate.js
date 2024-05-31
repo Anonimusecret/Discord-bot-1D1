@@ -6,43 +6,71 @@ module.exports = {
     
         .setName('generate')
         .setDescription('Сгенерировать статы для персонажа пф1')
-        .addIntegerOption(option =>
-            option.setName('points')
-            .setDescription('Сколько очков на поинт-бай?')
-            .setRequired(false)
+        
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('pointbuy')
+                .setDescription('Проброс случайных статов на цену поинт бая')
+                .addIntegerOption(option =>
+                    option.setName('points')
+                    .setDescription('Сколько очков на поинт-бай?')
+                    .setRequired(true)
+                )
         )
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('stats')
+                .setDescription('Проброс 4d6*1'))
         ,
 
         async execute(interaction) {	
-            await interaction.deferReply({ephemeral: true});	
+            await interaction.deferReply({ephemeral: true});
             
-            let maxPoints = interaction.options.getInteger('points', false) ?? 0;
+            let maxPoints = interaction.options.getInteger('points', false);
             let scoreCosts = [-4,-2,-1,0,1,2,3,5,7,10,13,17];
             let scores = [7,8,9,10,11,12,13,14,15,16,17,18];
             let stats;
 
-            if (maxPoints === 0 || maxPoints < -24 || maxPoints > 102){
+            if (interaction.options.getSubcommand() === 'stats') {
                 stats = rollStats();
                 await interaction.followUp({ content: stats, ephemeral: true});
             } else {
-                stats = randomPointBuy(maxPoints);
-                await interaction.followUp({ content: stats, ephemeral: true});
+                
+
+                if (maxPoints > 88){
+                    await interaction.followUp({ content: 'Количество очков должно быть меньше 88', ephemeral: true});
+                    return;
+                }
+
+                if (maxPoints < -22){// это минимальное окно где изменение на 1 вазможно и ничего не сломает
+                    await interaction.followUp({ content: 'Количество очков должно быть больше чем -22', ephemeral: true});
+                    return;
+                }
+
+                    stats = randomPointBuy(maxPoints) + 
+                    randomPointBuy(maxPoints) + 
+                    randomPointBuy(maxPoints) + 
+                    randomPointBuy(maxPoints);
+                    await interaction.followUp({ content: stats, ephemeral: true});
+                
             }
             
 
-            function randomPointBuy(points){ // не работает - добавить ограничители и починить 6й стат - лучше найти новый подход
+
+            function randomPointBuy(points){ 
                 let statsResult = [];
-                let n = 0;
+                
+                do{
 
-                for (let i = 0 ; i < 5 ; i++){
-                    n = roll(12)-1
-                    points -= scoreCosts[n];
-                    statsResult[i] = scores[n];
-                }
+                    for ( let i = 0, n = 0 ; i < 6 ; i++ ){
+                        n = roll(12)-1
+                        points -= scoreCosts[n];
+                        statsResult[i] = scores[n];
+                    }
 
-                n = scoreCosts.indexOf(points);
-                statsResult[5] = scores[n];
-                console.log(statsResult);
+                }while(calcPrice(statsResult) != maxPoints);
+
+                // bruteForceFourTwo();
 
                 return generateOutputMessege(statsResult);
             }
@@ -97,7 +125,58 @@ module.exports = {
                     costResult += scoreCosts[n];
                 }
 
-                    return messageResult + '\nЦеной по ПБ: ' + costResult;
+                    return messageResult + '\nЦеной по ПБ: ' + costResult + '\n';
             }
+
+            function calcPrice(statResult) {
+                let costResult = 0;
+
+                for (let i = 0, n = 0 ; i < statResult.length ; i++){
+                    n = scores.indexOf(statResult[i]);
+                    costResult += scoreCosts[n];
+                }
+                return costResult;
+            }
+
+            // function bruteForceForTwoLastStats(){
+            //     for (let n = 0 ; n < scoreCosts.length ; n++){ //брутфорс для подбора последних 2 статов
+            //         for (let m = 0 ; m < scoreCosts.length ; m++){
+            //             if (scoreCosts[n] + scoreCosts[m] == points){
+            //                 statsResult[4] = scores[n];
+            //                 statsResult[5] = scores[m];
+            //                 complete = true;
+            //                 break;
+            //             } else {
+            //                 complete = false;
+            //             }
+            //         }
+            //     }
+            // }
+
+            // function bruteForceFourTwo(){
+            //     let n = 0;
+            //     let pointsForRoll = 0;
+            //     let complete = false;
+            //     do{
+
+            //         for (let i = 0 ; i < 4 ; i++){
+    
+            //             pointsForRoll = points / (6-i);
+            //             do {
+            //                 n = roll(12)-1
+            //             } while(scoreCosts[n] > pointsForRoll);
+    
+            //             points -= scoreCosts[n];
+            //             statsResult[i] = scores[n];
+    
+            //         }
+    
+            //         //console.log('Четыре ' + statsResult)
+    
+            //         bruteForceForTwoLastStats();
+            //         //console.log('последние 2 ' + statsResult)
+    
+            //     }while (!complete && calcPrice(statsResult) != maxPoints) //  все ещё не работает как надо
+            // }
         }
 }
