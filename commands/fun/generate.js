@@ -70,8 +70,6 @@ module.exports = {
 
                 }while(calcPrice(statsResult) != maxPoints);
 
-                // bruteForceFourTwo();
-
                 return generateOutputMessege(statsResult);
             }
 
@@ -137,46 +135,5 @@ module.exports = {
                 }
                 return costResult;
             }
-
-            // function bruteForceForTwoLastStats(){
-            //     for (let n = 0 ; n < scoreCosts.length ; n++){ //брутфорс для подбора последних 2 статов
-            //         for (let m = 0 ; m < scoreCosts.length ; m++){
-            //             if (scoreCosts[n] + scoreCosts[m] == points){
-            //                 statsResult[4] = scores[n];
-            //                 statsResult[5] = scores[m];
-            //                 complete = true;
-            //                 break;
-            //             } else {
-            //                 complete = false;
-            //             }
-            //         }
-            //     }
-            // }
-
-            // function bruteForceFourTwo(){
-            //     let n = 0;
-            //     let pointsForRoll = 0;
-            //     let complete = false;
-            //     do{
-
-            //         for (let i = 0 ; i < 4 ; i++){
-    
-            //             pointsForRoll = points / (6-i);
-            //             do {
-            //                 n = roll(12)-1
-            //             } while(scoreCosts[n] > pointsForRoll);
-    
-            //             points -= scoreCosts[n];
-            //             statsResult[i] = scores[n];
-    
-            //         }
-    
-            //         //console.log('Четыре ' + statsResult)
-    
-            //         bruteForceForTwoLastStats();
-            //         //console.log('последние 2 ' + statsResult)
-    
-            //     }while (!complete && calcPrice(statsResult) != maxPoints) //  все ещё не работает как надо
-            // }
         }
 }
