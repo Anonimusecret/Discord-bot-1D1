@@ -9,44 +9,28 @@ module.exports = {
 
         async execute(interaction) {		
 
-            //let schedule = 'Привет График на неделю\n1 пусто\n2 хрущь\n3  пусто\n4 Ваниль\n5 Сильварилион\n6 Усталав\n7 пусто';
-            let schedule = 'Привет График на неделю\n';
-            let week = {
-                Понедельник: 'пусто',
-                Вторник: 'хрущь',
-                Среда: 'нет',
-                Четверг: 'Ваниль',
-                Пятница: 'Сильварилион',
-                Суббота: 'Усталав',
-                Воскресенье: 'ничего',
+            let schedule = 'График на неделю\n';
+            let days = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+            let games = [
+                'пусто', 
+                'Хрущь', 
+                'пусто', 
+                'Ваниль', 
+                'Сильварилион', 
+                'Усталав', 
+                'пусто'
+            ];
+            let scheduleDate = '2024-06-03';
+            let date = new Date(scheduleDate);
+            let unixTimeStamp = Math.floor(date.getTime() / 1000);
+
+            for (let i = 0 ; i < days.length; i++){
+                schedule += days[i] + ' - ' + games[i] + '\n';
             }
 
-            for (let day in week){ // если 2 раза встречается оинаковые значение оно плохо работает
-
-                schedule += propName(week, week[day]) + ' - ' + week[day] + '\n';
-
-            }
-
-
+            schedule += `<t:${unixTimeStamp}:d>`;
 
             await interaction.reply({ content: schedule, ephemeral: true}); 
-
-            function propName(prop, value) { // код гавна. придумать способ адекватнее
-                let res = '';
-                for (var i in prop) {
-                    if (typeof prop[i] == 'object') {
-                        if (propName(prop[i], value)) {
-                            return res;
-                        }
-                    } else {
-                        if (prop[i] == value) {
-                            res = i;
-                            return res;
-                        }
-                    }
-                }
-                return undefined;
-            }
 
         }
 }
