@@ -22,6 +22,7 @@ module.exports = {
                 "say - отправить сообщене в чат", 
                 "r - бросок d20",
                 "schedule - расрписание партий на неделю",
+                "level - количество EXP для уровня",
                 "reload - перезагрузить команду[DEV_ONLY]", 
                 "test - тестовая команда [DEV_ONLY]",
         ];
@@ -129,6 +130,16 @@ module.exports = {
                     exampleEmbed.fields[3].value = 'Команда пока в разработке'
                     await interaction.reply({ embeds: [exampleEmbed], ephemeral: true });
                     break;
+
+                case 'level - количество EXP для уровня':
+                        exampleEmbed.title = 'Информация о команде `/level`';
+                        exampleEmbed.description = 'Напишите уровень и получиите количество опыта для этого уровня в зависимости от прогрессии';
+                        exampleEmbed.fields[0].value += ' `0 секунд`'
+                        exampleEmbed.fields[1].value = '`/level 24 fast'
+                        exampleEmbed.fields[2].value = 'Если не указать прогрессию, EXP автоматически посчитается по средней.'
+                        exampleEmbed.fields[3].value = 'При уровне ниже 1 выведется `0`'
+                        await interaction.reply({ embeds: [exampleEmbed], ephemeral: true });
+                        break;
                     
                 case 'reload - перезагрузить команду[DEV_ONLY]':
                     await interaction.reply({content: 
@@ -147,6 +158,8 @@ module.exports = {
                     "**Важно!** Эту команду могу использовать только администраторы сервера",
                     ephemeral: true})
                     break;
+
+                
 
                 default:
                 await interaction.reply({content: 
