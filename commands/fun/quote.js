@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, ChannelType } = require('discord.js');
 
 module.exports = {
-    cooldown: 0,
+    cooldown: 5,
     data: new SlashCommandBuilder()
     
         .setName('quote')
