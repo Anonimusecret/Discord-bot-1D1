@@ -21,7 +21,7 @@ module.exports = {
             const query = interaction.options.getString('link', true); // we need input/query to play
 
             // let's defer the interaction as things can take time to process
-            await interaction.deferReply();
+            await interaction.deferReply({ephemeral: true});
 
             try {
                 const { track } = await player.play(channel, query, {
@@ -31,7 +31,7 @@ module.exports = {
                     }
                 });
 
-                return interaction.followUp(`**${track.cleanTitle}** enqueued!`);
+                return interaction.followUp({content: `**${track.cleanTitle}** enqueued!`, ephemeral: true});
             } catch (e) {
                 // let's return error if something failed
                 return interaction.followUp(`Something went wrong: ${e}`);

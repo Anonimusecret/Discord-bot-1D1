@@ -1,5 +1,5 @@
 const Discord = require('discord.js'); // Подключаем библиотеку discord.js
-const { Player } = require('discord-player');
+const { Player, useQueue } = require('discord-player');
 
 const { Client, Collection, Events, GatewayIntentBits, AttachmentBuilder } = require('discord.js'); // Подключаем библиотеку discord.js
 
@@ -64,5 +64,17 @@ for (const folder of eventFolders) {
 		}
 	}
 }
+
+process.on('uncaughtException', function (err) {
+	console.log('An error occurred: ', err);
+	console.log(err.stack);
+	const queue = useQueue(interaction.guild.id);
+	queue.node.setPaused(!queue.node.isPaused())
+});
+
+player.events.on('playerStart', (queue, track) => {
+    // Emitted when the player starts to play a song
+    queue.metadata.channel.send(`Started playing: **${track.title}**`);
+});
 
 client.login(token); // Авторизация бота
