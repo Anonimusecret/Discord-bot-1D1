@@ -48,16 +48,20 @@ for (const folder of commandFolders) {
 	}
 }
 
-const eventsPath = path.join(__dirname, 'events'); //пути ивентов
-const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
+const eventsFolderPath = path.join(__dirname, 'events'); //пути ивентов
+const eventFolders = fs.readdirSync(eventsFolderPath);
 
-for (const file of eventFiles) { //выполнение ивентов
-	const filePath = path.join(eventsPath, file);
-	const event = require(filePath);
-	if (event.once) {
-		client.once(event.name, (...args) => event.execute(...args));
-	} else {
-		client.on(event.name, (...args) => event.execute(...args));
+for (const folder of eventFolders) {
+	const eventsPath = path.join(eventsFolderPath, folder);
+	const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
+	for (const file of eventFiles) { //выполнение ивентов
+		const filePath = path.join(eventsPath, file);
+		const event = require(filePath);
+		if (event.once) {
+			client.once(event.name, (...args) => event.execute(...args));
+		} else {
+			client.on(event.name, (...args) => event.execute(...args));
+		}
 	}
 }
 
