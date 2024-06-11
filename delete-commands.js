@@ -15,3 +15,14 @@ rest.delete(Routes.applicationGuildCommand(clientId, guildId, '12403998877580042
 rest.delete(Routes.applicationCommand(clientId, 'commandId'))
 	.then(() => console.log('Successfully deleted application command'))
 	.catch(console.error); */
+
+	//Удалить все глобальные команды:
+
+	// rest.put(Routes.applicationCommands(clientId), { body: [] })
+	// .then(() => console.log('Successfully deleted all application commands.'))
+	// .catch(console.error);
+
+	//Удалить все серверные команды:
+	// rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: [] })
+	// .then(() => console.log('Successfully deleted all guild commands.'))
+	// .catch(console.error);

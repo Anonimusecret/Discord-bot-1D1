@@ -65,16 +65,30 @@ for (const folder of eventFolders) {
 	}
 }
 
+const musicEventsPath = path.join(__dirname, 'musicEvents'); //пути музыкальных ивентов
+const musicEventFiles = fs.readdirSync(musicEventsPath).filter(file => file.endsWith('.js'));
+
+for (const file of musicEventFiles) { //выполнение ивентов
+	const filePath = path.join(musicEventsPath, file);
+	const musicEvent = require(filePath);
+	if (musicEvent.once) {
+		player.events.once(musicEvent.name, (...args) => musicEvent.execute(...args));
+	} else {
+		player.events.on(musicEvent.name, (...args) => musicEvent.execute(...args));
+	}
+}
+
 process.on('uncaughtException', function (err) {
 	console.log('An error occurred: ', err);
 	console.log(err.stack);
-	const queue = useQueue(interaction.guild.id);
-	queue.node.setPaused(!queue.node.isPaused())
+	// const queue = useQueue(interaction.guild.id);
+	// queue.node.setPaused(!queue.node.isPaused())
 });
 
-player.events.on('playerStart', (queue, track) => {
-    // Emitted when the player starts to play a song
-    queue.metadata.channel.send(`Started playing: **${track.title}**`);
+player.on('debug', async (message) => {
+    // Emitted when the player sends debug info
+    // Useful for seeing what dependencies, extractors, etc are loaded
+    console.log(`General player debug event: ${message}`);
 });
 
 client.login(token); // Авторизация бота

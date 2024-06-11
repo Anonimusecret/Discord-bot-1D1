@@ -2,11 +2,11 @@ const { SlashCommandBuilder, ChannelType } = require('discord.js');
 const { useMainPlayer, useQueue } = require('discord-player');
 
 module.exports = {
-    cooldown: 1,
+    cooldown: 0,
     data: new SlashCommandBuilder()
     
-        .setName('pause')
-        .setDescription('Поставить паузу')
+        .setName('skip')
+        .setDescription('Пропустить трек')
         ,
 
         async execute(interaction) {
@@ -19,15 +19,16 @@ module.exports = {
             try {
 
                 const queue = useQueue(interaction.guild.id);
-                if(!queue.node.isPaused()){
-                    queue.node.setPaused(!queue.node.isPaused());
-                    return interaction.followUp({content: `Track paused!`, ephemeral: true});
-                }else{
-                    queue.node.setPaused(!queue.node.isPaused());
-                    return interaction.followUp({content: `Track resumed!`, ephemeral: true});
-                }
-                //isPaused() returns true if that player is already paused
 
+                if (!queue?.isPlaying()) return interaction.followUp({ content: `No music currently playing <${interaction.member}>... try again ? <❌>` });
+                
+                const success = queue.node.skip();
+
+                if (success){
+                    return interaction.followUp({ content: 'Skipped!', ephemeral: true});
+                }else{
+                    return interaction.followUp({ content: 'Unexpected error. Try again', ephemeral: true});
+                }
                 
             } catch (e) {
                 // let's return error if something failed
