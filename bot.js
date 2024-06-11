@@ -1,12 +1,17 @@
 const Discord = require('discord.js'); // Подключаем библиотеку discord.js
+const { Player, useQueue } = require('discord-player');
+
 const { Client, Collection, Events, GatewayIntentBits, AttachmentBuilder } = require('discord.js'); // Подключаем библиотеку discord.js
 
 const client = new Discord.Client({
 	intents: [
 		GatewayIntentBits.Guilds,
 		GatewayIntentBits.GuildMessages,
-		GatewayIntentBits.DirectMessageReactions,
-		GatewayIntentBits.GuildModeration,
+		GatewayIntentBits.DirectMessageReactions, //reacts
+		GatewayIntentBits.GuildModeration, //audit
+		GatewayIntentBits.GuildMembers, //muz
+		GatewayIntentBits.GuildVoiceStates, //muz
+        GatewayIntentBits.MessageContent //muz
 	]
 })
 
@@ -21,6 +26,9 @@ const path = require('node:path');
 let config = require('./config.json'); // Подключаем файл с параметрами и информацией
 let token = config.token; // «Вытаскиваем» из него токен
 let prefix = config.prefix; // «Вытаскиваем» из него префикс
+
+const player = new Player(client);
+player.extractors.loadDefault();
 
 const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath);
@@ -40,17 +48,47 @@ for (const folder of commandFolders) {
 	}
 }
 
-const eventsPath = path.join(__dirname, 'events'); //пути ивентов
-const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
+const eventsFolderPath = path.join(__dirname, 'events'); //пути ивентов
+const eventFolders = fs.readdirSync(eventsFolderPath);
 
-for (const file of eventFiles) { //выполнение ивентов
-	const filePath = path.join(eventsPath, file);
-	const event = require(filePath);
-	if (event.once) {
-		client.once(event.name, (...args) => event.execute(...args));
-	} else {
-		client.on(event.name, (...args) => event.execute(...args));
+for (const folder of eventFolders) {
+	const eventsPath = path.join(eventsFolderPath, folder);
+	const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
+	for (const file of eventFiles) { //выполнение ивентов
+		const filePath = path.join(eventsPath, file);
+		const event = require(filePath);
+		if (event.once) {
+			client.once(event.name, (...args) => event.execute(...args));
+		} else {
+			client.on(event.name, (...args) => event.execute(...args));
+		}
 	}
 }
+
+const musicEventsPath = path.join(__dirname, 'musicEvents'); //пути музыкальных ивентов
+const musicEventFiles = fs.readdirSync(musicEventsPath).filter(file => file.endsWith('.js'));
+
+for (const file of musicEventFiles) { //выполнение ивентов
+	const filePath = path.join(musicEventsPath, file);
+	const musicEvent = require(filePath);
+	if (musicEvent.once) {
+		player.events.once(musicEvent.name, (...args) => musicEvent.execute(...args));
+	} else {
+		player.events.on(musicEvent.name, (...args) => musicEvent.execute(...args));
+	}
+}
+
+process.on('uncaughtException', function (err) {
+	console.log('An error occurred: ', err);
+	console.log(err.stack);
+	// const queue = useQueue(interaction.guild.id);
+	// queue.node.setPaused(!queue.node.isPaused())
+});
+
+player.on('debug', async (message) => {
+    // Emitted when the player sends debug info
+    // Useful for seeing what dependencies, extractors, etc are loaded
+    console.log(`General player debug event: ${message}`);
+});
 
 client.login(token); // Авторизация бота
