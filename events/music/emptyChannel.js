@@ -3,6 +3,7 @@ const { Player } = require('discord-player');
 
 module.exports = {
 	name: 'emptyChannel',
+	source: 'player',
 	once: false,
 	execute(queue) {
 		// Emitted when the voice channel has been empty for the set threshold
