@@ -42,14 +42,17 @@ module.exports = {
                 new StringSelectMenuOptionBuilder()
                     .setLabel(optionSecond)
                     .setDescription('Option 2')
-                    .setValue(optionSecond)
+                    .setValue('optionSecond')
 			);
         
             const row = new ActionRowBuilder()
                 .addComponents(select);
 
+            const timer = interaction.options.getInteger('timer', false)*1000 ?? 30_000;
+            let date = Date.now()
+            let unixTimeStamp = Math.floor( (date + timer) / 1000);
             await interaction.followUp({
-                content: 'Голосуем! \nГолосование закончится через [время]',
+                content: 'Голосуем! \nГолосование закончится ' + `<t:${unixTimeStamp}:R>`,
                 components: [row],
             });
 
@@ -57,7 +60,7 @@ module.exports = {
             let votesCount = 0;
             let votesForFirst = 0;
             let votesForSecond = 0;
-            const timer = interaction.options.getInteger('timer', false)*1000 ?? 30_000;
+            
 
             const isUserVoted = i => {
                 i.deferUpdate(); 
@@ -80,7 +83,7 @@ module.exports = {
                 voted[votesCount] = i.user.id;
                 votesCount++;
 
-                if (i.values[0] == 'option_1'){
+                if (i.values[0] == 'optionFirst'){
                     votesForFirst++
                 } else {
                     votesForSecond++
