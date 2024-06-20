@@ -3,6 +3,7 @@ const { Player } = require('discord-player');
 
 module.exports = {
 	name: 'playerStart',
+	source: 'player',
 	once: false,
 	execute(queue, track) {
 		//console.log(`Started playing **${track.cleanTitle}**!`)

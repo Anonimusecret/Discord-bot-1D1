@@ -2,11 +2,12 @@ const { Events } = require('discord.js');
 const { Player } = require('discord-player');
 
 module.exports = {
-	name: 'error',
+	name: 'playerError',
+	source: 'player',
 	once: false,
 	execute(queue, error) {
-        // Emitted when the player queue encounters error
-        console.log(`General player error event: ${error.message}`);
+        // Emitted when the audio player errors while streaming audio track
+        console.log(`Player error event: ${error.message}`);
         console.log(error);
 	},
 };

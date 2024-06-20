@@ -1,5 +1,6 @@
 const Discord = require('discord.js'); // Подключаем библиотеку discord.js
-const { Player, useQueue } = require('discord-player');
+const { Player, useQueue, useMainPlayer } = require('discord-player');
+const { YandexMusicExtractor } = require("discord-player-yandexmusic");
 
 const { Client, Collection, Events, GatewayIntentBits, AttachmentBuilder } = require('discord.js'); // Подключаем библиотеку discord.js
 
@@ -27,8 +28,14 @@ let config = require('./config.json'); // Подключаем файл с па�
 let token = config.token; // «Вытаскиваем» из него токен
 let prefix = config.prefix; // «Вытаскиваем» из него префикс
 
+let yandex_access_token = config.yandex_access_token;
+let yandex_uid = config.yandex_uid
+
 const player = new Player(client);
+player.extractors.register(YandexMusicExtractor, { access_token: yandex_access_token, uid: yandex_uid });
 player.extractors.loadDefault();
+
+
 
 const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath);
@@ -57,26 +64,24 @@ for (const folder of eventFolders) {
 	for (const file of eventFiles) { //выполнение ивентов
 		const filePath = path.join(eventsPath, file);
 		const event = require(filePath);
-		if (event.once) {
-			client.once(event.name, (...args) => event.execute(...args));
-		} else {
-			client.on(event.name, (...args) => event.execute(...args));
+		if(event.source === 'client'){
+			if (event.once) {
+				client.once(event.name, (...args) => event.execute(...args));
+			} else {
+				client.on(event.name, (...args) => event.execute(...args));
+			}
 		}
+		if(event.source === 'player'){
+			if (event.once) {
+				player.events.once(event.name, (...args) => event.execute(...args));
+			} else {
+				player.events.on(event.name, (...args) => event.execute(...args));
+			}
+		}
+		
 	}
 }
 
-const musicEventsPath = path.join(__dirname, 'musicEvents'); //пути музыкальных ивентов
-const musicEventFiles = fs.readdirSync(musicEventsPath).filter(file => file.endsWith('.js'));
-
-for (const file of musicEventFiles) { //выполнение ивентов
-	const filePath = path.join(musicEventsPath, file);
-	const musicEvent = require(filePath);
-	if (musicEvent.once) {
-		player.events.once(musicEvent.name, (...args) => musicEvent.execute(...args));
-	} else {
-		player.events.on(musicEvent.name, (...args) => musicEvent.execute(...args));
-	}
-}
 
 process.on('uncaughtException', function (err) {
 	console.log('An error occurred: ', err);
