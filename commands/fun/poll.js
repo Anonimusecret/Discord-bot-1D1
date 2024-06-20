@@ -28,7 +28,7 @@ module.exports = {
         const optionFirst = interaction.options.getString('option_one', true);
         const optionSecond = interaction.options.getString('option_two', true);
 
-        await interaction.reply({content: `${interaction.user} запускает голосование!`})
+        //await interaction.reply({content: `${interaction.user} запускает голосование!`})
         
 
         const select = new StringSelectMenuBuilder()
@@ -51,8 +51,8 @@ module.exports = {
             const timer = interaction.options.getInteger('timer', false)*1000 ?? 30_000;
             let date = Date.now()
             let unixTimeStamp = Math.floor( (date + timer) / 1000);
-            await interaction.followUp({
-                content: 'Голосуем! \nГолосование закончится ' + `<t:${unixTimeStamp}:R>`,
+            await interaction.reply({
+                content: `${interaction.user} запускает голосование!` + '\nГолосование закончится ' + `<t:${unixTimeStamp}:R>`,
                 components: [row],
             });
 
