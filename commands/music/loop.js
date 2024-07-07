@@ -39,9 +39,6 @@ module.exports = {
                     }
                 }
                 
-
-                
-                
             } catch (e) {
                 // let's return error if something failed
                 return interaction.followUp(`Something went wrong: ${e}`);

@@ -1,4 +1,5 @@
-const { Collection, Events } = require('discord.js');
+const { Collection, Events, EmbedBuilder, InteractionType } = require('discord.js');
+const { useQueue } = require('discord-player');
 
 module.exports = {
 	name: Events.InteractionCreate,
@@ -58,6 +59,127 @@ module.exports = {
             } catch (error) {
                 console.error(error);
             }
-        } 
+        } else if (interaction.isButton()){
+
+            const customId = inter.customId;
+            const channel = interaction.member.voice.channel;
+            const queue = useQueue(interaction.guild.id);
+
+            if (!customId) {
+                console.log('неприемлимый customId кнопки')
+                return;
+            }
+
+
+            switch (customId){
+                case 'back':
+
+                    await interaction.deferUpdate();
+
+                    if (!queue?.isPlaying()) return interaction.followUp({ content: `No music currently playing <${interaction.member}>... try again ? <❌>` });
+                    
+                    if (!queue.history.previousTrack) return interaction.followUp({ content: `There was no music played before <${interaction.member}>... try again ? <❌>`});
+                    
+                    await queue.history.back();
+
+                    break;
+
+                case 'skip':
+                    
+                    if (!channel) return interaction.reply('You are not connected to a voice channel!'); // make sure we have a voice channel
+
+                    await interaction.deferUpdate();
+
+                    try {
+
+                        if (!queue?.isPlaying()) return interaction.followUp({ content: `No music currently playing <${interaction.member}>... try again ? <❌>` });
+                        
+                        const success = queue.node.skip();
+
+                        if (success){
+                            interaction.followUp({ content: 'Skipped!', ephemeral: true});
+                        }else{
+                            interaction.followUp({ content: 'Unexpected error. Try again', ephemeral: true});
+                        }
+                        
+                    } catch (e) {
+                        // let's return error if something failed
+                        return interaction.followUp(`Something went wrong: ${e}`);
+                    }
+
+                    break;
+                
+                case 'resume&pause':
+                
+                if (!channel) return interaction.reply('You are not connected to a voice channel!'); // make sure we have a voice channel
+    
+                await interaction.deferUpdate();
+    
+                try {
+    
+                    if(!queue.node.isPaused()){
+                        queue.node.setPaused(!queue.node.isPaused());
+                        interaction.followUp({content: `Track paused!`, ephemeral: true});
+                    }else{
+                        queue.node.setPaused(!queue.node.isPaused());
+                        interaction.followUp({content: `Track resumed!`, ephemeral: true});
+                    }
+                    //isPaused() returns true if that player is already paused
+    
+                    
+                } catch (e) {
+                    // let's return error if something failed
+                    return interaction.followUp(`Something went wrong: ${e}`);
+                }
+
+                    break;
+
+                case 'loop':
+
+                await interaction.deferUpdate();
+
+                try {
+    
+                    if (!queue?.isPlaying()) return interaction.followUp({ content: `No music currently playing <${interaction.member}>... try again ? <❌>` });
+                    
+                    if (queue.repeatMode === QueueRepeatMode.OFF){
+                        const success = queue.setRepeatMode(QueueRepeatMode.TRACK);
+                        
+                        if (!success){
+                            interaction.followUp({ content: 'Looped!', ephemeral: true});
+                        }else{
+                            interaction.followUp({ content: 'Unexpected error occured while enabling loop. Try again. Try again', ephemeral: true});
+                        }
+                    } else {
+                        const success = queue.setRepeatMode(QueueRepeatMode.OFF);
+                        if (!success){
+                            interaction.followUp({ content: 'Loop disabled!', ephemeral: true});
+                        }else{
+                            interaction.followUp({ content: 'Unexpected error occured while disabling loop. Try again', ephemeral: true});
+                        }
+                    }
+                    
+                } catch (e) {
+                    // let's return error if something failed
+                    return interaction.followUp(`Something went wrong: ${e}`);
+                }
+
+                    break;
+                
+                case 'lyrics':
+
+                await interaction.deferUpdate();
+
+                interaction.followUp(`Now playing **${track.cleanTitle}**!`);
+
+                    break;
+                
+                default:
+
+                console.log(`Нажата кнопка ${customId}`);
+
+                break;
+            }
+        }
     },
 };

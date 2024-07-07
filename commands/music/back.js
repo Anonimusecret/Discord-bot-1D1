@@ -22,7 +22,7 @@ module.exports = {
 
                 if (!queue?.isPlaying()) return interaction.followUp({ content: `No music currently playing <${interaction.member}>... try again ? <❌>` });
                 
-                if (!queue.history.previousTrack) return inter.editReply({ content: `There was no music played before <${interaction.member}>... try again ? <❌>`});
+                if (!queue.history.previousTrack) return interaction.followUp({ content: `There was no music played before <${interaction.member}>... try again ? <❌>`});
                 
                 await queue.history.back();
 
