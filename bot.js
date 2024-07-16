@@ -1,6 +1,7 @@
 const Discord = require('discord.js'); // Подключаем библиотеку discord.js
 const { Player, useQueue, useMainPlayer } = require('discord-player');
 const { YandexMusicExtractor } = require("discord-player-yandexmusic");
+const { YoutubeiExtractor } = require("discord-player-youtubei");
 
 const { Client, Collection, Events, GatewayIntentBits, AttachmentBuilder } = require('discord.js'); // Подключаем библиотеку discord.js
 
@@ -32,6 +33,7 @@ let yandex_access_token = config.yandex_access_token;
 let yandex_uid = config.yandex_uid
 
 const player = new Player(client);
+player.extractors.register(YoutubeiExtractor, {})
 player.extractors.register(YandexMusicExtractor, { access_token: yandex_access_token, uid: yandex_uid });
 player.extractors.loadDefault();
 

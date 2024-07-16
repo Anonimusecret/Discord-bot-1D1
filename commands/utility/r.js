@@ -14,9 +14,23 @@ module.exports = {
                 .setCustomId('rollButton')
                 .setLabel('Roll')
                 .setStyle(ButtonStyle.Primary);
-            
+
+            const rollDisadvantage = new ButtonBuilder()
+                .setCustomId('rollDisadvantage')
+                .setLabel('Disadvantage')
+                .setStyle(ButtonStyle.Danger);
+
+            const rollAdvantage = new ButtonBuilder()
+                .setCustomId('rollAdvantage')
+                .setLabel('Advantage')
+                .setStyle(ButtonStyle.Success);
+
             const row = new ActionRowBuilder()
-                .addComponents(rollButton);
+                .addComponents(
+                    rollDisadvantage,
+                    rollButton,
+                    rollAdvantage,
+                );
 
             const response = await interaction.reply({
                 content: `Нажмите на кнопу чтобы бросить 1d20`,
@@ -39,7 +53,15 @@ module.exports = {
             collector.on('collect', async i => {
                 //const selection = i.values[0];
 
-                roll = Math.floor(Math.random() * 20)+1
+                await i.deferUpdate();
+
+                if(i.customId === 'rollButton'){
+                    roll = Math.floor(Math.random() * 20)+1
+                } else if (i.customId === 'rollDisadvantage'){
+                    roll = Math.min(Math.floor(Math.random() * 20)+1, Math.floor(Math.random() * 20)+1)
+                } else if (i.customId === 'rollAdvantage'){
+                    roll = Math.max(Math.floor(Math.random() * 20)+1, Math.floor(Math.random() * 20)+1)
+                }
 
                 if (roll === 20){
                     rollResult = roll + ' **Критический успех** <:crit:1037660173659029505>'
@@ -60,7 +82,7 @@ module.exports = {
                         components: [row],
                     });
                 }
-                await i.reply({content: 'Заролено ' + rollResult , ephemeral: true});
+                //await i.reply({content: 'Заролено ' + rollResult , ephemeral: true});
                 // await i.reply(`${i.user} has selected ${selection}!`);
             });
 

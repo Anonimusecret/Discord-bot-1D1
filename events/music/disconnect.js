@@ -8,5 +8,11 @@ module.exports = {
 	execute(queue) {
 		// Emitted when the bot leaves the voice channel
         queue.metadata.channel.send('Looks like my job here is done, leaving now!');
+		if (queue.metadata.lyricsThread) {
+			queue.metadata.lyricsThread.delete();
+			queue.setMetadata({
+				channel: queue.metadata.channel
+			});
+		}
 	},
 };

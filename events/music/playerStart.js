@@ -26,32 +26,52 @@ module.exports = {
 			.setStyle('Secondary');
 
 		const resumepause = new ButtonBuilder()
-			.setLabel(':play_pause:')
+			.setLabel('⏯️')
 			.setCustomId('resume&pause')
 			.setStyle('Secondary');
 
 		const loop = new ButtonBuilder()
-			.setLabel('🔁')
+			.setLabel('🔂')
 			.setCustomId('loop')
 			.setStyle('Secondary');
 
-		const lyrics = new ButtonBuilder()
-			.setLabel(':notepad_spiral:')
-			.setCustomId("lyrics")
+		const songInfo = new ButtonBuilder()
+			.setLabel('📓')
+			.setCustomId("songInfo")
+			.setStyle("Secondary");
+		
+		const stop = new ButtonBuilder()
+			.setLabel('⏹')
+			.setCustomId("stopMusic")
+			.setStyle("Danger");
+
+		const next = new ButtonBuilder()
+			.setLabel('⏩')
+			.setCustomId("nextTrack")
+			.setStyle("Success");
+
+		const repeatQueue = new ButtonBuilder()
+			.setLabel('🔁')
+			.setCustomId("repeatQueue")
 			.setStyle("Secondary");
 
 		const row1 = new ActionRowBuilder().addComponents(
-			back,
 			loop,
+			back,
 			resumepause,
 			skip,
-			lyrics
+		);
+		const row2 = new ActionRowBuilder().addComponents(
+			repeatQueue,
+			stop,
+			next,
+			songInfo,
 		);
 
-    	queue.metadata.channel.send({ embeds: [embed], components: [row1] });
+    	queue.metadata.channel.send({ embeds: [embed], components: [row1, row2] });
 
 
-		//console.log(`Started playing **${track.cleanTitle}**!`)
+		console.log(`Started playing **${track.cleanTitle}**!`)
 		//queue.metadata.channel.send(`Started playing **${track.cleanTitle}**!`);
 	},
 };
